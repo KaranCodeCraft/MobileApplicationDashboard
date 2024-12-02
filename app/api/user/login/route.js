@@ -45,7 +45,7 @@ export async function POST(request) {
 
     // Respond with the token
     return new Response(
-      JSON.stringify({ token, message: "Login successful" }),
+      JSON.stringify({ token, message: "Login sucessfull!!" }),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
   } catch (error) {

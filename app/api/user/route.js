@@ -1,11 +1,47 @@
 import clientPromise from "@/lib/middleware/mongoose";
 import User from "@/lib/models/User";
+import jwt from "jsonwebtoken";
+
+const secret = process.env.JWT_SECRET;
+
 
 export async function POST(request) {
   try {
-    await clientPromise; // Ensure MongoDB is connected
+    await clientPromise;
 
     const body = await request.json();
+
+    const authHeader = request.headers.get("Authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Access Denied" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    const token = authHeader.split(" ")[1];
+
+        let decoded;
+
+        try {
+          decoded = jwt.verify(token, secret);
+        } catch (error) {          
+          return new Response(JSON.stringify({ error: "Access Denied" }), {
+            status: 401,
+            headers: { "Content-Type": "application/json" },
+          });
+        }
+
+        const { name, id, role, email, password } = body;
+        if (!id || !role || !name || !email || !password) {
+          return new Response(
+            JSON.stringify({
+              error:
+                "All fields are required",
+            }),
+            { status: 400, headers: { "Content-Type": "application/json" } }
+          );
+        }
 
     // Create a new user instance
     const newUser = new User(body);
@@ -19,14 +55,14 @@ export async function POST(request) {
   } catch (error) {
     console.error("Error creating user:", error);
 
-    // Handle MongoDB duplicate key error (11000)
+
     if (error.code === 11000) {
-      const duplicateField = Object.keys(error.keyValue)[0]; // Field that caused duplication (e.g. 'id')
-      const duplicateValue = error.keyValue[duplicateField]; // The duplicate value (e.g. '7')
+      const duplicateField = Object.keys(error.keyValue)[0]; 
+      const duplicateValue = error.keyValue[duplicateField]; 
 
       return new Response(
         JSON.stringify({
-          error: `Duplicate value '${duplicateValue}' found for field '${duplicateField}'. Please use a unique value.`,
+          error: `${duplicateField.toLocaleUpperCase()} "${duplicateValue}" Already exists.`,
         }),
         {
           status: 400,
