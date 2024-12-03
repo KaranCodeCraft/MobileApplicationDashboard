@@ -2,10 +2,10 @@
 
 export default function SignupForm() {
   const handleSubmit = async (event) => {
-    event.preventDefault(); // Prevent default form submission
+    event.preventDefault(); 
 
-    const formData = new FormData(event.target); // Collect form data
-    const data = Object.fromEntries(formData.entries()); // Convert to object
+    const formData = new FormData(event.target); 
+    const data = Object.fromEntries(formData.entries()); 
 
     try {
       const response = await fetch("/api/user", {
@@ -16,7 +16,7 @@ export default function SignupForm() {
 
       if (response.ok) {
         const result = await response.json();
-        alert("Crated Sucessfully"); // Show success message
+        alert("Crated Sucessfully"); 
       } else {
         const error = await response.json();
         alert(error.error || "An error occurred.");

@@ -7,8 +7,10 @@ export default function DashboardLayout({ children }) {
     <section className="flex flex-col min-h-screen">
       <Navbar />
       <div className="flex-grow flex">
-        <Sidebar/>
-      {children}
+        <Sidebar />
+        <div className="w-full text-xl p-4 bg-gray-100 rounded-md mx-1">
+          {children}
+        </div>
       </div>
       <Footer />
     </section>

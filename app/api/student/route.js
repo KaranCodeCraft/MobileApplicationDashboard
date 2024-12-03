@@ -9,7 +9,6 @@ export async function GET(request) {
     try {
       await clientPromise;
       const authHeader = request.headers.get("Authorization");
-      // console.log(authHeader);
 
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return new Response(JSON.stringify({ error: "Invalid Request" }), {
